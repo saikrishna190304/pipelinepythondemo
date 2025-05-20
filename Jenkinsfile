@@ -4,13 +4,18 @@ pipeline {
     environment {
         VENV = 'venv'
     }
-    stages {
-        stage ("Build") {
-            steps {
-                sh 'docker build -t saireddie45/app1 .'
-
-            }
+   stages {
+    stage('Build') {
+        steps {
+            sh 'docker build -t saireddie45/app1 .'
         }
+    }
+    stage('Push') {
+        steps {
+            sh 'docker push saireddie45/app1'
+        }
+    }
+
 
     stages {
         stage ("Install") {
