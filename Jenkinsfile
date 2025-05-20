@@ -1,42 +1,48 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'saireddie45/python-jenkins:latest'
+        }
+    }
+
+    environment {
+        VENV = 'venv'
+    }
 
     stages {
-        stage('Setup') {
+        stage("Install") {
             steps {
                 sh '''
-                    python3.10 --version
-                    python3.10 -m pip install --upgrade pip setuptools
+                    python -m venv $VENV
+                    . $VENV/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt wheel
                 '''
             }
         }
 
-        stage('Lint') {
+        stage("Lint") {
             steps {
-                echo 'Running lint...'
-                // Replace with your actual lint command if you have one
-                sh 'flake8 .'  
+                script {
+                    echo "This is my Linting Step"
+                }
             }
         }
 
-        stage('Test') {
+        stage("Test") {
             steps {
-                echo 'Running tests...'
-                sh 'pytest'  // Replace with your test command
+                sh '''
+                    . $VENV/bin/activate
+                    pytest --cov=app --junitxml=pytest-results.xml tests/
+                '''
             }
         }
 
-        stage('Build') {
+        stage("Run Application") {
             steps {
-                echo 'Building package...'
-                sh 'python3.10 setup.py sdist bdist_wheel'
-            }
-        }
-
-        stage('Deploy to Staging') {
-            steps {
-                echo 'Deploying to staging environment...'
-                // Your deploy commands here
+                script {
+                    echo "This is my Run application Step"
+                }
             }
         }
     }
