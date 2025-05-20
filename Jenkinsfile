@@ -2,6 +2,7 @@ pipeline {
     agent {
         docker {
             image 'saireddie45/python-jenkins:latest'
+            args '-u root:root'
         }
     }
 
