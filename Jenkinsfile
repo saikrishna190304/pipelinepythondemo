@@ -41,8 +41,7 @@ pipeline {
         stage ("Run Docker with Python") {
             steps {
                 sh '''
-                    docker build -t my-python-app .
-                    docker run --rm my-python-app
+                    docker --version
                 '''
             }
         }
