@@ -1,18 +1,50 @@
 pipeline {
     agent any
 
-    stages {
-        stage ("Build") {
-            steps {
-                sh 'docker build -t minfyakhilesh/app1 .'
+    environment {
+        VENV = 'venv'
+    }
 
+    stages {
+        stage ("Install") {
+            steps {
+                sh '''
+                    python3 -m venv $VENV
+                    . $VENV/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt wheel
+                '''
             }
         }
-        stage ("pushing") {
+        stage ("Lint") {
             steps {
-            sh 'docker push minfyakhilesh/app1'
+                script {
+                    echo "This is my Linting Step"
+                }
+            }
         }
-
+        stage ("Test") {
+            steps {
+                sh '''
+                    . $VENV/bin/activate
+                    pytest --cov=app --junitxml=pytest-results.xml tests/
+                '''
+            }
+        }
+        stage ("Run Application") {
+            steps {
+                script {
+                    echo "This is my Run applcaition Step"
+                }
+            }
+        }
+        stage ("Run Docker with Python") {
+            steps {
+                sh '''
+                    docker build -t my-python-app .
+                    docker run --rm my-python-app
+                '''
+            }
+        }
     }
-}
 }
