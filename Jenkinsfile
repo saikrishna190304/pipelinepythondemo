@@ -4,21 +4,21 @@ pipeline {
     environment {
         VENV = 'venv'
     }
-   stages {
-    stage('Build') {
-        steps {
-            sh 'docker build -t saireddie45/app1 .'
-        }
-    }
-    stage('Push') {
-        steps {
-            sh 'docker push saireddie45/app1'
-        }
-    }
-
 
     stages {
-        stage ("Install") {
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t saireddie45/app1 .'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker push saireddie45/app1'
+            }
+        }
+
+        stage('Install Python Requirements') {
             steps {
                 sh '''
                     python3 -m venv $VENV
@@ -28,14 +28,16 @@ pipeline {
                 '''
             }
         }
-        stage ("Lint") {
+
+        stage('Lint') {
             steps {
                 script {
                     echo "This is my Linting Step"
                 }
             }
         }
-        stage ("Test") {
+
+        stage('Test') {
             steps {
                 sh '''
                     . $VENV/bin/activate
@@ -43,20 +45,19 @@ pipeline {
                 '''
             }
         }
-        stage ("Run Application") {
+
+        stage('Run Application') {
             steps {
                 script {
-                    echo "This is my Run applcaition Step"
+                    echo "This is my Run application Step"
                 }
             }
         }
-        stage ("Run Docker with Python") {
+
+        stage('Verify Docker Installation') {
             steps {
-                sh '''
-                    docker --version
-                '''
+                sh 'docker --version'
             }
         }
     }
-}
 }
