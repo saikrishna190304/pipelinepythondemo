@@ -1,40 +1,36 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.10' // Pulls official Python image from Docker Hub
-        }
-    }
+    agent any
 
     stages {
         stage('Setup') {
             steps {
-                sh 'python -m pip install --upgrade pip'
+                sh 'python3.10 --version'
+                sh 'python3.10 -m pip install --upgrade pip'
             }
         }
 
         stage('Lint') {
             steps {
-                echo 'Linting code (placeholder)...'
-                // e.g., sh 'flake8 .'
+                sh 'python3.10 -m pip install pylint'
+                sh 'pylint *.py || true'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'pip install pytest'
-                sh 'pytest'
+                sh 'python3.10 -m unittest discover'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Build step (placeholder)...'
+                echo 'Build step goes here'
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying to staging (placeholder)...'
+                echo 'Deploy step goes here'
             }
         }
     }
