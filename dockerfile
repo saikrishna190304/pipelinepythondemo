@@ -1,5 +1,4 @@
-FROM python:3.10-slim
-WORKDIR /app
-COPY . .
-RUN pip install --no-cache-dir -r requirements.txt || true
-CMD ["python", "app.py"]
+FROM jenkins/jenkins:lts
+USER root
+RUN apt-get update && apt-get install -y python3 python3-venv python3-pip
+USER jenkins
