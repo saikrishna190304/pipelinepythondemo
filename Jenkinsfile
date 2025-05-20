@@ -1,43 +1,43 @@
 pipeline {
     agent any
- 
-    environment {
-        VENV = 'venv'
-    }
- 
+
     stages {
-        stage ("Install") {
+        stage('Setup') {
             steps {
                 sh '''
-                    python3 -m venv $VENV
-                    . $VENV/bin/activate
-                    pip install --upgrade pip
-                    pip install -r requirements.txt wheel
+                    python3.10 --version
+                    python3.10 -m pip install --upgrade pip setuptools
                 '''
             }
         }
-        stage ("Lint") {
+
+        stage('Lint') {
             steps {
-                script {
-                    echo "This is my Linting Step"
-                }
+                echo 'Running lint...'
+                // Replace with your actual lint command if you have one
+                sh 'flake8 .'  
             }
         }
-        stage ("Test") {
+
+        stage('Test') {
             steps {
-                sh '''
-                    . $VENV/bin/activate
-                    pytest --cov=app --junitxml=pytest-results.xml tests/
-                '''
+                echo 'Running tests...'
+                sh 'pytest'  // Replace with your test command
             }
         }
-        stage ("Run Application") {
+
+        stage('Build') {
             steps {
-                script {
-                    echo "This is my Run applcaition Step"
-                }
+                echo 'Building package...'
+                sh 'python3.10 setup.py sdist bdist_wheel'
             }
         }
- 
+
+        stage('Deploy to Staging') {
+            steps {
+                echo 'Deploying to staging environment...'
+                // Your deploy commands here
+            }
+        }
     }
 }
