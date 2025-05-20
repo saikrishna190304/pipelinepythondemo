@@ -1,20 +1,15 @@
 pipeline {
-    agent {
-        docker {
-            image 'saireddie45/python-jenkins:latest'
-            args '-u root:root'
-        }
-    }
+    agent any
 
     environment {
         VENV = 'venv'
     }
 
     stages {
-        stage("Install") {
+        stage ("Install") {
             steps {
                 sh '''
-                    python -m venv $VENV
+                    python3 -m venv $VENV
                     . $VENV/bin/activate
                     pip install --upgrade pip
                     pip install -r requirements.txt wheel
@@ -22,7 +17,7 @@ pipeline {
             }
         }
 
-        stage("Lint") {
+        stage ("Lint") {
             steps {
                 script {
                     echo "This is my Linting Step"
@@ -30,7 +25,7 @@ pipeline {
             }
         }
 
-        stage("Test") {
+        stage ("Test") {
             steps {
                 sh '''
                     . $VENV/bin/activate
@@ -39,11 +34,28 @@ pipeline {
             }
         }
 
-        stage("Run Application") {
+        stage ("Run Application") {
             steps {
                 script {
                     echo "This is my Run application Step"
                 }
+            }
+        }
+
+        // 🔽 New Stage: Run using Docker image
+        stage ("Run Python in Docker") {
+            agent {
+                docker {
+                    image 'saireddie45/python-jenkins:latest'
+                    args '-u root:root'  // optional
+                }
+            }
+            steps {
+                sh '''
+                    python --version
+                    pip install -r requirements.txt
+                    python app.py
+                '''
             }
         }
     }
